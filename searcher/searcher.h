@@ -56,4 +56,40 @@ private:
 }; //end index
 
 //搜索模块
+class Searcher{
+private:
+	Index* index;
+public:
+	Searcher():index(new Index())
+	{}
+
+	bool Init(const std::string& input_path);  //加载索引
+	bool Search(const std::string& query,std::string* json_result);  //搜索函数
+	
+
+	~Searcher()
+	{
+		delete index;
+	}
+private:
+	std::string MakeDesc(const std::string& content,const std::string& key);
+};
 }  //end searcher
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

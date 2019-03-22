@@ -136,34 +136,34 @@ void  Index::CutWord(const std::string& input,std::vector<std::string>* output){
 
 
 //搜索模块函数
-#if 0
 bool Searcher::Init(const std::string& input_path){
-	return index->Buid(input_path);
+	return index->Build(input_path);
 }
 
 bool Searcher::Search(const std::string& query,std::string* json_result){
-	//1.分词
+	//1.分词，对搜索的字符串进行分词
 	std::vector<std::string> tokens;
-	index->CutWord(query,tokens);
+	index->CutWord(query,&tokens);
 
-	//2.触发
+	//2.触发，对个分词结果在倒排索引中查找
 	std::vector<Weight> all_token_result;
 	for(std::string word : tokens){
 		boost::to_lower(word);
 		auto* inverted_list = index->GetInvertedList(word);
-		if(inverted_list == NULL){
-			continue;	
+		if(inverted_list == NULL){  //说明当前词在倒排索引中不在，跳过即可
+			continue;  
 		}
 
-		all_token_result.insert(all_token_result.end(),inverted_list->begin(),inverted_list.end());
+		all_token_result.insert(all_token_result.end(),inverted_list->begin(),inverted_list->end());
 	}
 
-	//3.排序
+	//3.排序，根据 all_token_result 中每个元素的权重排序
 	//sort 的第三个参数可以使用 仿函数/函数指针/lambda 表达式
-	//lambda 表达式：匿名函数
-	std::sort(all_token_result.begin(),all_token_result.end(),[](const Weight& w1,const Weight& w2){return w1.weigth > w2.weigth});
+	//lambda 表达式：匿名函数 作为比较函数
+	std::sort(all_token_result.begin(),all_token_result.end(),[](const Weight& w1,const Weight& w2) \
+		 {return w1.weigth > w2.weigth;});
 
-	//4.构造结果
+	//4.构造结果，根据排序的先后顺序 查找正排所引 按 json 格式输出最终的内容
 	Json::Value results;
 	for(const auto& weight : all_token_result){
 		const auto& doc_info = index->GetDocInfo(weight.doc_id);
@@ -174,19 +174,24 @@ bool Searcher::Search(const std::string& query,std::string* json_result){
 		Json::Value result;
 		result["title"] = doc_info->title;
 		result["url"] = doc_info->url;
-		result["desc"] = GetDesc(doc_info->content,weight.key);
+		result["desc"] = MakeDesc(doc_info->content,weight.key);  //构建相对比较恰当的摘要
 		results.append(result);
 	}
 
 	Json::FastWriter writer;
-	*json_result = writer.writer(results);
+	*json_result = writer.write(results);
 	return true;
 }
 
-std::string Searcher::GetDesc(const std::string& content,const std::string& key){
+std::string Searcher::MakeDesc(const std::string& content,const std::string& key){
 		size_t pos = content.find(key);
 		if(pos == std::string::npos)
 		{
+			if(content.size() < 80)
+			{
+				return content.substr(content.size());
+			}
+			
 			return content.substr(0,80) + "...";
 		}
 
@@ -200,6 +205,5 @@ std::string Searcher::GetDesc(const std::string& content,const std::string& key)
 			return content.substr(begin,80) + "...";
 		}
 }
-#endif
 
 }  //end searcher
