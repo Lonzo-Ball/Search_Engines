@@ -16,7 +16,7 @@ Linux、C++
 2.构造 DocInfo 对象，更新正排索引<br>
 a) 对当前读取到的这个 html 文件借助 boost 库按 \3 进行切分，切分结果分别是：标题、url、正文<br>
 b) 根据切分结果构造一个 DocInfo 对象<br>
-c) 把这个结果插入到正排索引中,正排索引是一个 vector<DocInfo> 对象<br>
+c) 把这个结果插入到正排索引中,正排索引是一个 vector对象,存放的是一个个 DocInfo 对象<br>
 3.更新倒排索引<br>
 a)
 b)
