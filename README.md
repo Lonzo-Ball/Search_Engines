@@ -32,5 +32,5 @@ c) 遍历哈希表，在倒排索引中查找（倒排索引是一个哈希表 u
 3.排序，根据 all_token_result 中每个元素的权重排序<br>
 4.构造结果，根据排序的先后顺序,查找正排所引,按 json 格式输出最终的内容
 <br>
-本项目中采用的是jieba分词 资料地址：https://github.com/yanyiwu/cppjieba
-本项目引入了外部的httplib头文件，使用户能够通过http请求的方式对Boost文档进行查询。资料地址：https://github.com/yhirose/cpp-httplib
+本项目中采用的是jieba分词 资料地址：https://github.com/yanyiwu/cppjieba<br>
+本项目引入了外部的httplib头文件，使用户能够通过http请求的方式对Boost文档进行查询。资料地址：https://github.com/yhirose/cpp-httplib<br>
